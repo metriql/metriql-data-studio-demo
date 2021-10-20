@@ -1,0 +1,75 @@
+version: 2
+seeds:
+  - name: order_items
+    meta: 
+      metriql:
+        relations:
+          orders:
+            to: ref('orders')
+            type: left_join
+            relationship: many_to_one
+            sql: '{TABLE}.order_id = {TARGET}.order_id'
+          customers:
+            to: ref('customers')
+            type: left_join
+            relationship: many_to_one
+            sql: '{relation.orders.dimension.customer_id} = {TARGET}.customer_id'
+        dimension:
+          order_id:
+            primary: true
+        measures:
+          total_revenue:
+            aggregation: sum 
+            column: price
+
+    columns:
+      - name: order_id
+      - name: order_item_id
+      - name: product_id
+      - name: seller_id
+      - name: shipping_limit_date
+      - name: price
+      - name: freight_value
+
+  - name: orders
+    meta:
+      metriql:
+        dimension:
+          order_id:
+            primary: true
+          order_purchase_timestamp:
+            timeframes: [week, month, year, hour_of_day, day_of_month, day, date]
+        measures:
+          total_orders:
+            aggregation: count_unique
+            column: order_id
+
+    columns:
+      - name: order_id
+      - name: customer_id
+      - name: order_status
+      - name: order_purchase_timestamp
+      - name: order_approved_at
+      - name: order_delivered_carrier_date
+      - name: order_delivered_customer_date
+      - name: order_estimated_delivery_date
+
+  - name: customers
+    meta: 
+      metriql:
+        dimension:
+          customer_id:
+            primary: true
+        
+        measures:
+          total_customers:
+            aggregation: count_unique
+            column: customer_id
+
+    columns:
+      - name: customer_id
+      - name: customer_unique_id
+      - name: customer_zip_code_prefix
+      - name: customer_city
+      - name: customer_state
+    
