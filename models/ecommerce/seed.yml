@@ -25,6 +25,9 @@ seeds:
     columns:
       - name: order_id
       - name: order_item_id
+        meta:
+          metriql.dimension:
+            primary: true
       - name: product_id
       - name: seller_id
       - name: shipping_limit_date
@@ -34,21 +37,22 @@ seeds:
   - name: orders
     meta:
       metriql:
-        dimension:
-          order_id:
-            primary: true
-          order_purchase_timestamp:
-            timeframes: [week, month, year, hour_of_day, day_of_month, day, date]
         measures:
           total_orders:
             aggregation: count_unique
             column: order_id
-
     columns:
       - name: order_id
+        meta:
+          metriql.dimension:
+            primary: true
       - name: customer_id
       - name: order_status
       - name: order_purchase_timestamp
+        meta:
+          metriql.dimension:
+            type: timestamp
+            timeframes: [hour, day, week, month]
       - name: order_approved_at
       - name: order_delivered_carrier_date
       - name: order_delivered_customer_date
@@ -57,17 +61,15 @@ seeds:
   - name: customers
     meta: 
       metriql:
-        dimension:
-          customer_id:
-            primary: true
-        
         measures:
           total_customers:
             aggregation: count_unique
             column: customer_id
-
     columns:
       - name: customer_id
+        meta:
+          metriql.dimension:
+            primary: true
       - name: customer_unique_id
       - name: customer_zip_code_prefix
       - name: customer_city
